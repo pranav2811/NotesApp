@@ -9,6 +9,9 @@ import androidx.room.Room;
 import androidx.room.RoomDatabase;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 @Database(entities = {Note.class},version = 1)
 public abstract class NoteDatabase extends RoomDatabase {
 
@@ -34,11 +37,26 @@ public abstract class NoteDatabase extends RoomDatabase {
         public void onCreate(@NonNull SupportSQLiteDatabase db) {
             super.onCreate(db);
 
-            new PopulateDbAsyncTask(instance).execute();
+//            new PopulateDbAsyncTask(instance).execute();
+
+            NoteDao noteDao = instance.noteDao();
+
+            ExecutorService executorsService = Executors.newSingleThreadExecutor();
+
+            executorsService.execute(new Runnable() {
+                @Override
+                public void run() {
+                    noteDao.insert(new Note("Title 1","Description 1"));
+                    noteDao.insert(new Note("Title 2","Description 2"));
+                    noteDao.insert(new Note("Title 3","Description 3"));
+                    noteDao.insert(new Note("Title 4","Description 4"));
+                    noteDao.insert(new Note("Title 5","Description 5"));
+                }
+            });
 
         }
     };
-
+/*
     private static class PopulateDbAsyncTask extends AsyncTask<Void,Void,Void> {
         private NoteDao noteDao;
 
@@ -56,4 +74,6 @@ public abstract class NoteDatabase extends RoomDatabase {
             return null;
         }
     }
+    */
+
 }

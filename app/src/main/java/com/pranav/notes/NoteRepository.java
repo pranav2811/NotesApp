@@ -6,6 +6,8 @@ import android.os.AsyncTask;
 import androidx.lifecycle.LiveData;
 
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class NoteRepository {
     //A repository is a standard java class. Its task is to establish connection between different data sources and the rest of the application
@@ -13,6 +15,8 @@ public class NoteRepository {
 
     private NoteDao noteDao;
     private LiveData<List<Note>> notes;
+
+    ExecutorService executors = Executors.newSingleThreadExecutor();
 
     public NoteRepository(Application application){
         NoteDatabase database = NoteDatabase.getInstance(application);
@@ -23,19 +27,37 @@ public class NoteRepository {
 
     public void insert(Note note){
 
-        new InsertNoteAsyncTask(noteDao).execute(note);
+//        new InsertNoteAsyncTask(noteDao).execute(note);
+
+        executors.execute(new Runnable() {
+            @Override
+            public void run() {
+                noteDao.insert(note);
+            }
+        });
 
     }
     public void update(Note note){
 
-        new UpdateNoteAsyncTask(noteDao).execute(note);
+//        new UpdateNoteAsyncTask(noteDao).execute(note);
+        executors.execute(new Runnable() {
+            @Override
+            public void run() {
+                noteDao.update(note);
+            }
+        });
 
     }
 
     public void delete(Note note){
 
-        new DeleteNoteAsyncTask(noteDao).execute(note);
-
+//        new DeleteNoteAsyncTask(noteDao).execute(note);
+        executors.execute(new Runnable() {
+            @Override
+            public void run() {
+                noteDao.delete(note);
+            }
+        });
     }
 
     public LiveData<List<Note>> getAllNotes(){
@@ -44,6 +66,8 @@ public class NoteRepository {
     //1.parameter for doInBackground method
     //2.parameter for onProgressUpdate method
     //3.parameter return type of doInBackground
+
+    /*
     private static class InsertNoteAsyncTask extends AsyncTask<Note,Void,Void>{
 
         private NoteDao noteDao;
@@ -95,4 +119,6 @@ public class NoteRepository {
         }
 
     }
+     */
+
 }

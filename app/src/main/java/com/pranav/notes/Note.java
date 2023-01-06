@@ -5,7 +5,7 @@ import androidx.room.PrimaryKey;
 
 @Entity(tableName = "note_table")//this is the room annotations process by enabling this we can enable the room database to write the necessary code in the background
 //the room database will now automatically create the sqllite tables for this project
-public class Note {
+public class Note{
 
 
     //defining the column names
